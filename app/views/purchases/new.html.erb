@@ -1,0 +1,12 @@
+<h1>Subir Nueva Boleta</h1>
+
+<%= form_with(model: @purchase, url: purchases_path) do |form| %>
+  <div class="field">
+    <%= form.label :receipt_file, "Selecciona un archivo (JPG, PNG o PDF)" %>
+    <%= form.file_field :receipt_file, required: true %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Procesar Boleta" %>
+  </div>
+<% end %>
