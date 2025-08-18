@@ -1,2 +1,70 @@
-<h1>Purchases#show</h1>
-<p>Find me in app/views/purchases/show.html.erb</p>
+<div class="container">
+  <div id="purchase-details" data-status-url="<%= status_purchase_path(@purchase) %>" data-status="<%= @purchase.status %>">
+
+    <h1>Detalle de la Compra</h1>
+
+    <% if @purchase.status == 'processing' %>
+      <p><strong>Estado:</strong> Procesando con la IA, por favor espera... La página se actualizará sola.</p>
+    <% elsif @purchase.status == 'failed' %>
+      <p><strong>Estado:</strong> Hubo un error al procesar la boleta.</p>
+    <% else %>
+      <p><strong>Estado:</strong> ¡Procesado con éxito!</p>
+    <% end %>
+
+    <p>
+      <strong>Tienda:</strong> <%= @purchase.store_name %>
+    </p>
+    
+    <p>
+      <strong>RUT de la Tienda:</strong> <%= @purchase.store_rut %>
+    </p>
+
+    <p>
+      <strong>Fecha:</strong> <%= @purchase.purchase_date %>
+    </p>
+
+    <p>
+      <strong>Total:</strong> <%= number_to_currency(@purchase.total_amount) %>
+    </p>
+
+    <h3>Ítems:</h3>
+    <ul>
+      <% @purchase.items&.each do |item| %>
+          <li><%= item['quantity'] %> x <%= item['name'] %> - <%= number_to_currency(item['price']) %></li>
+      <% end %>
+    </ul>
+
+    <hr>
+
+    <% if @purchase.status == 'completed' %>
+      <%= link_to 'Revisar y Corregir Datos', edit_purchase_path(@purchase) %>
+    <% end %>
+    <%= link_to 'Subir otra Boleta', new_purchase_path %>
+
+  </div>
+</div>
+
+
+<%# El script que hace polling %>
+<script>
+  document.addEventListener("turbo:load", () => {
+    const purchaseDetails = document.getElementById("purchase-details");
+    const statusUrl = purchaseDetails.dataset.statusUrl;
+    const currentStatus = purchaseDetails.dataset.status;
+
+    if (currentStatus === 'processing') {
+      const intervalId = setInterval(() => {
+        fetch(statusUrl)
+          .then(response => response.json())
+          .then(data => {
+            console.log("Chequeando estado:", data.status);
+            if (data.status !== 'processing') {
+              clearInterval(intervalId);
+              // window.location.reload();
+              window.location.href = window.location.href;
+            }
+          });
+      }, 3000);
+    }
+  });
+</script>

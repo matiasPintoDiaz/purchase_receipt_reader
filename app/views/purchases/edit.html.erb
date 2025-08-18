@@ -1,0 +1,35 @@
+<div class="container">
+  <h1>Revisar y Corregir Datos de la Boleta</h1>
+
+  <%= form_with(model: @purchase) do |form| %>
+    <div class="field">
+      <%= form.label :store_name, "Nombre de la Tienda" %>
+      <%= form.text_field :store_name %>
+    </div>
+
+    <div class="field">
+      <%= form.label :store_rut, "RUT de la Tienda" %>
+      <%= form.text_field :store_rut %>
+    </div>
+
+    <div class="field">
+      <%= form.label :purchase_date, "Fecha de Compra" %>
+      <%= form.date_field :purchase_date %>
+    </div>
+
+    <div class="field">
+      <%= form.label :total_amount, "Monto Total" %>
+      <%= form.number_field :total_amount, step: 0.01 %>
+    </div>
+
+    <div class="field">
+      <%= form.label :items, "Ítems (en formato JSON)" %>
+      <%= form.text_area :items, value: @purchase.items.to_json, rows: 10 %>
+      <small>Puedes editar los productos directamente aquí. Asegúrate de mantener el formato JSON correcto.</small>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Guardar Cambios" %>
+    </div>
+  <% end %>
+</div>

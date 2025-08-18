@@ -1,6 +1,7 @@
-<h1>Subir Nueva Boleta</h1>
+<div class="container">
+  <h1>Subir Nueva Boleta</h1>
 
-<%= form_with(model: @purchase, url: purchases_path) do |form| %>
+  <%= form_with(model: @purchase, url: purchases_path) do |form| %>
   <div class="field">
     <%= form.label :receipt_file, "Selecciona un archivo (JPG, PNG o PDF)" %>
     <%= form.file_field :receipt_file, required: true %>
@@ -9,4 +10,26 @@
   <div class="actions">
     <%= form.submit "Procesar Boleta" %>
   </div>
-<% end %>
+  <% end %>
+</div>
+<Br />
+<div class="container">
+  <h1>Consultar Boleta</h1>
+
+  <% if @purchases.any? %>
+    <ul class="purchase-list">
+      <% @purchases.each do |purchase| %>
+        <li class="purchase-item">
+          <%# Creamos un enlace que redirige a la página 'show' de esa boleta %>
+          <%= link_to purchase_path(purchase) do %>
+            <span class="store-name"><%= purchase.store_name || "Procesando..." %></span>
+            <span class="purchase-date"><%= purchase.purchase_date %></span>
+            <span class="purchase-total"><%= number_to_currency(purchase.total_amount) %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>Aún no hay boletas procesadas.</p>
+  <% end %>
+</div>
