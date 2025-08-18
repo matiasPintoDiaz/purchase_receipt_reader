@@ -55,7 +55,7 @@ Sigue estos pasos para poner a correr el proyecto en tu máquina local.
 
 **1. Clonar el Repositorio**
 ```bash
-git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
+git clone git@github.com:matiasPintoDiaz/purchase_receipt_reader.git
 cd tu-repositorio
 ```
 
@@ -97,6 +97,31 @@ La aplicación necesita una API key para funcionar. Usamos el proveedor **Groq**
       api_key: "pega-aqui-tu-clave-secreta-de-groq"
     ```
 4.  Guarda y cierra el editor.
+
+5.  La aplicación por defecto simula la respuesta de la IA, esto, en caso de no querer implementar una API key en primera instancia. Para habilitar la
+    respuesta de la IA, descomentar las líneas 17 a 26 y comentar las líneas 27 a 36 del archivo "process_receipt_job.rb", se debería ver así:
+    ```
+    client = OpenAI::Client.new(access_token: Rails.application.credentials.groq[:api_key], uri_base: "https://api.groq.com/openai/v1")
+    response = client.chat(
+      parameters: {
+        model: "llama3-8b-8192",
+        messages: [ { role: "user", content: build_prompt(extracted_text) } ],
+        temperature: 0.1 # Poca creatividad para que sea preciso
+      }
+    )
+
+    json_response = response.dig("choices", 0, "message", "content")
+    # json_response = {
+    #   "store_name": "Tienda de Prueba",
+    #   "store_rut": "77.777.777-7",
+    #   "purchase_date": "2025-08-17",
+    #   "total_amount": 12345,
+    #   "items": [
+    #     { "name": "Producto de Prueba 1", "quantity": 2, "price": 5000 },
+    #     { "name": "Producto de Prueba 2", "quantity": 1, "price": 2345 }
+    #   ]
+    # }.to_json
+    ```
 
 **6. Iniciar la Aplicación**
 ```bash
